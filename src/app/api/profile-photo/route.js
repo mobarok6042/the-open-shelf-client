@@ -36,7 +36,7 @@ export async function POST(request) {
 
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Profile photo uploads are not configured." },
+      { error: "Image uploads are not configured." },
       { status: 503 },
     );
   }
@@ -52,11 +52,11 @@ export async function POST(request) {
     );
   }
 
-  const photo = formData.get("photo");
+  const photo = formData.get("image") || formData.get("photo");
 
   if (!(photo instanceof File) || photo.size === 0) {
     return NextResponse.json(
-      { error: "Choose a profile photo to continue." },
+      { error: "Choose an image file to continue." },
       { status: 400 },
     );
   }
@@ -70,7 +70,7 @@ export async function POST(request) {
 
   if (photo.size > maxPhotoSize) {
     return NextResponse.json(
-      { error: "Profile photos must be 5 MB or smaller." },
+      { error: "Images must be 5 MB or smaller." },
       { status: 413 },
     );
   }
@@ -118,7 +118,7 @@ export async function POST(request) {
     typeof uploadResult.data?.url !== "string"
   ) {
     return NextResponse.json(
-      { error: uploadResult.error?.message || "The profile photo could not be uploaded." },
+      { error: uploadResult.error?.message || "The image could not be uploaded." },
       { status: 502 },
     );
   }

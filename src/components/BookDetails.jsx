@@ -153,6 +153,7 @@ export default function BookDetails({ id }) {
               src={book["Image-link"]}
               alt={`Cover image for ${book.Title}`}
               fill
+              unoptimized
               priority
               sizes="(max-width: 767px) 100vw, 40vw"
               className="object-cover"
