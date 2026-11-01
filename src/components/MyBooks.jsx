@@ -7,8 +7,9 @@ import { ArrowRight, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
+import { apiFetch, booksEndpoint } from "@/lib/api";
 
-const booksEndpoint = "http://localhost:5000/books";
+const myBooksEndpoint = `${booksEndpoint.replace(/\/books$/, "")}/my-books`;
 
 function isBook(book) {
   return (
@@ -50,33 +51,37 @@ export default function MyBooks() {
       setErrorMessage("");
 
       try {
-        const response = await fetch(booksEndpoint, {
-          signal: controller.signal,
-          cache: "no-store",
-        });
+        const [inventoryResponse, response] = await Promise.all([
+          fetch(booksEndpoint, { signal: controller.signal, cache: "no-store" }),
+          apiFetch(myBooksEndpoint, { signal: controller.signal, cache: "no-store" }),
+        ]);
 
+        if (!inventoryResponse.ok) {
+          throw new Error(`The book inventory could not be loaded (HTTP ${inventoryResponse.status}).`);
+        }
         if (!response.ok) {
           throw new Error(`Your books could not be loaded (HTTP ${response.status}).`);
         }
 
-        const data = await response.json();
+        const [inventory, data] = await Promise.all([
+          inventoryResponse.json(),
+          response.json(),
+        ]);
 
-        if (!Array.isArray(data) || !data.every(isBook)) {
+        if (
+          !Array.isArray(inventory) ||
+          !inventory.every(isBook) ||
+          !Array.isArray(data) ||
+          !data.every(isBook)
+        ) {
           throw new Error("The books service returned data in an unexpected format.");
         }
 
-        const email = user.email.trim().toLowerCase();
         setBooks(
-          data
-            .filter(
-              (book) =>
-                typeof book.Email === "string" &&
-                book.Email.trim().toLowerCase() === email,
-            )
-            .map((book) => ({
-              ...book,
-              AvailableCopies: getAvailableCopies(book, data),
-            })),
+          data.map((book) => ({
+            ...book,
+            AvailableCopies: getAvailableCopies(book, inventory),
+          })),
         );
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
@@ -107,9 +112,8 @@ export default function MyBooks() {
     setDeletingBookId(book._id);
 
     try {
-      const query = new URLSearchParams({ email: user.email });
-      const response = await fetch(
-        `${booksEndpoint}/${encodeURIComponent(book._id)}?${query.toString()}`,
+      const response = await apiFetch(
+        `${booksEndpoint}/${encodeURIComponent(book._id)}`,
         { method: "DELETE" },
       );
       const result = await response.json().catch(() => null);

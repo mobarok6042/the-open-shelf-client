@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { groupBookCopies } from "@/lib/book-copies";
+import { booksEndpoint } from "@/lib/api";
 
 const booksPerPage = 9;
-const booksEndpoint = "http://localhost:5000/books";
 
 function isBook(book) {
   return (

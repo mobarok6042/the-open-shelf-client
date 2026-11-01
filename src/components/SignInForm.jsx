@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -14,6 +14,14 @@ export default function SignInForm() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("protected") === "1") {
+      toast.error("Sign in or create an account to access that page.");
+      window.history.replaceState(window.history.state, "", "/sign-in");
+    }
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();

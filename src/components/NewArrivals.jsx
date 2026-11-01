@@ -5,7 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, RefreshCw } from "lucide-react";
 
-const latestBooksEndpoint = "http://localhost:5000/books/new-arrivals";
+import { API_BASE_URL } from "@/lib/api";
+
+const latestBooksEndpoint = `${API_BASE_URL}/books/new-arrivals`;
 
 function isBook(book) {
   return (

@@ -6,8 +6,7 @@ import Link from "next/link";
 import { ArrowRight, RefreshCw, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
-
-const booksEndpoint = "http://localhost:5000";
+import { apiFetch, API_BASE_URL } from "@/lib/api";
 
 export default function BorrowedBooks() {
   const { data: session, isPending: isSessionPending } = useSession();
@@ -35,8 +34,8 @@ export default function BorrowedBooks() {
       setIsLoading(true);
       setErrorMessage("");
       try {
-        const response = await fetch(
-          `${booksEndpoint}/borrows?email=${encodeURIComponent(user.email)}`,
+        const response = await apiFetch(
+          `${API_BASE_URL}/borrows`,
           { signal: controller.signal, cache: "no-store" },
         );
         const data = await response.json();
@@ -73,12 +72,10 @@ export default function BorrowedBooks() {
 
     setReturningBookId(book._id);
     try {
-      const response = await fetch(
-        `${booksEndpoint}/borrows/${encodeURIComponent(book._id)}/return`,
+      const response = await apiFetch(
+        `${API_BASE_URL}/borrows/${encodeURIComponent(book._id)}/return`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email }),
         },
       );
       const result = await response.json().catch(() => null);

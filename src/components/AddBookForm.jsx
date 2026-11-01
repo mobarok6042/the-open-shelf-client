@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
+import { apiFetch, booksEndpoint } from "@/lib/api";
 
-const booksEndpoint = "http://localhost:5000/books";
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
 
@@ -18,8 +18,6 @@ export default function AddBookForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = session?.user;
-  const userName = user?.username || user?.name || "";
-
   useEffect(() => {
     if (!isPending && !user?.email) {
       toast.error("Sign in or create an account to access Add Book.");
@@ -30,8 +28,8 @@ export default function AddBookForm() {
     event.preventDefault();
     setErrorMessage("");
 
-    if (!userName || !user?.email) {
-      const message = "Your account name and email are required to add a book.";
+    if (!user?.email) {
+      const message = "Sign in with an account to add a book.";
       setErrorMessage(message);
       toast.error(message);
       return;
@@ -70,11 +68,9 @@ export default function AddBookForm() {
         Category: String(formData.get("category") || ""),
         "Image-link": uploadResult.imageUrl,
         Details: String(formData.get("description") || "").trim(),
-        UserName: userName,
-        Email: user.email,
       };
 
-      const response = await fetch(booksEndpoint, {
+      const response = await apiFetch(booksEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(book),

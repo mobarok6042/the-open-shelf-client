@@ -7,8 +7,7 @@ import { ArrowLeft, BookOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
-
-const booksEndpoint = "http://localhost:5000/books";
+import { apiFetch, booksEndpoint } from "@/lib/api";
 
 function isBook(book) {
   return (
@@ -62,8 +61,8 @@ export default function BookDetails({ id }) {
         setAvailableCopies(selectedBook ? getAvailableCopies(selectedBook, books) : 0);
 
         if (selectedBook && user?.email) {
-          const borrowResponse = await fetch(
-            `${booksEndpoint.replace(/\/books$/, "")}/borrows?email=${encodeURIComponent(user.email)}`,
+          const borrowResponse = await apiFetch(
+            `${booksEndpoint.replace(/\/books$/, "")}/borrows`,
             { signal: controller.signal, cache: "no-store" },
           );
           const borrowResult = await borrowResponse.json();
@@ -114,15 +113,10 @@ export default function BookDetails({ id }) {
 
     setIsBorrowing(true);
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `${booksEndpoint}/${encodeURIComponent(book._id)}/borrow`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: user.email,
-            name: user.username || user.name || user.email,
-          }),
         },
       );
       const result = await response.json().catch(() => null);
