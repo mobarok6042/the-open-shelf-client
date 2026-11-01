@@ -10,7 +10,7 @@ const booksEndpoint = "http://localhost:5000/books";
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
 
-const categories = ["Fiction", "Science", "History", "Kids", "Others"];
+const categories = ["Fiction", "Science", "History", "Kids","Novel", "Others"];
 
 export default function AddBookForm() {
   const { data: session, isPending } = useSession();

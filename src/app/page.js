@@ -3,6 +3,7 @@ import { BookOpen } from "lucide-react";
 
 import CurrentDate from "@/components/CurrentDate";
 import HeroSlider from "@/components/HeroSlider";
+import NewArrivals from "@/components/NewArrivals";
 
 const featuredWriters = [
   {
@@ -44,6 +45,8 @@ export default function Home() {
       >
         <HeroSlider />
       </Suspense>
+
+      <NewArrivals />
 
       <section className="border-y border-border/70 bg-amber-50/70 dark:bg-amber-400/5">
         <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-12 sm:px-6 md:grid-cols-[auto_1fr] md:items-center md:gap-8 md:py-14 lg:px-8">
