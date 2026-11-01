@@ -24,6 +24,10 @@ export const metadata = {
   },
   description:
     "An independent bookshop with hand-picked fiction, non-fiction, and beautiful editions for curious minds.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }) {
