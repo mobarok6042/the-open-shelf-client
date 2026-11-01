@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import { addBorrowedBook, getBorrowedBooks } from "@/lib/borrowed-books";
+import { useSession } from "@/lib/auth-client";
+import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
 
 const booksEndpoint = "http://localhost:5000/books";
 
@@ -23,11 +24,15 @@ function isBook(book) {
 }
 
 export default function BookDetails({ id }) {
+  const { data: session, isPending: isSessionPending } = useSession();
   const [book, setBook] = useState(null);
+  const [availableCopies, setAvailableCopies] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [retryCount, setRetryCount] = useState(0);
   const [isBorrowed, setIsBorrowed] = useState(false);
+  const [isBorrowing, setIsBorrowing] = useState(false);
+  const user = session?.user;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -54,11 +59,28 @@ export default function BookDetails({ id }) {
 
         const selectedBook = books.find((item) => item._id === id);
         setBook(selectedBook ?? null);
-        setIsBorrowed(
-          selectedBook
-            ? getBorrowedBooks().some((item) => item.book._id === selectedBook._id)
-            : false,
-        );
+        setAvailableCopies(selectedBook ? getAvailableCopies(selectedBook, books) : 0);
+
+        if (selectedBook && user?.email) {
+          const borrowResponse = await fetch(
+            `${booksEndpoint.replace(/\/books$/, "")}/borrows?email=${encodeURIComponent(user.email)}`,
+            { signal: controller.signal, cache: "no-store" },
+          );
+          const borrowResult = await borrowResponse.json();
+
+          if (!borrowResponse.ok || !Array.isArray(borrowResult)) {
+            throw new Error(
+              borrowResult?.message || "Your borrow status could not be loaded.",
+            );
+          }
+
+          const groupKey = getBookGroupKey(selectedBook);
+          setIsBorrowed(
+            borrowResult.some((borrowedBook) => getBookGroupKey(borrowedBook) === groupKey),
+          );
+        } else {
+          setIsBorrowed(false);
+        }
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
           return;
@@ -78,25 +100,55 @@ export default function BookDetails({ id }) {
 
     loadBook();
     return () => controller.abort();
-  }, [id, retryCount]);
+  }, [id, retryCount, user?.email]);
 
-  function handleBorrow() {
-    if (!book) {
+  async function handleBorrow() {
+    if (!book || isBorrowing) {
       return;
     }
 
+    if (!user?.email) {
+      toast.error("Sign in to borrow a book.");
+      return;
+    }
+
+    setIsBorrowing(true);
     try {
-      const added = addBorrowedBook(book);
-      setIsBorrowed(true);
-      if (added) {
-        toast.success("This book was added to My Borrows.");
-      } else {
-        toast.info("This book is already in My Borrows.");
+      const response = await fetch(
+        `${booksEndpoint}/${encodeURIComponent(book._id)}/borrow`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.username || user.name || user.email,
+          }),
+        },
+      );
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          const inventoryResponse = await fetch(booksEndpoint, { cache: "no-store" });
+          if (inventoryResponse.ok) {
+            const inventory = await inventoryResponse.json();
+            if (Array.isArray(inventory) && inventory.every(isBook)) {
+              setAvailableCopies(getAvailableCopies(book, inventory));
+            }
+          }
+        }
+        throw new Error(result?.message || "The book could not be borrowed.");
       }
+
+      setIsBorrowed(true);
+      setAvailableCopies((available) => Math.max(0, available - 1));
+      toast.success("This book was added to My Borrows.");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "The book could not be borrowed.",
       );
+    } finally {
+      setIsBorrowing(false);
     }
   }
 
@@ -169,6 +221,9 @@ export default function BookDetails({ id }) {
             <p className="mt-2 text-base font-medium text-muted-foreground">
               by {book.Author}
             </p>
+            <p className="mt-3 text-sm font-semibold text-primary" aria-live="polite">
+              {availableCopies} {availableCopies === 1 ? "copy" : "copies"} available
+            </p>
             <div className="mt-7 border-t border-foreground/10 pt-6">
               <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-foreground">
                 <BookOpen className="size-5 text-primary" />
@@ -181,10 +236,16 @@ export default function BookDetails({ id }) {
             <button
               type="button"
               onClick={handleBorrow}
-              disabled={isBorrowed}
+              disabled={availableCopies === 0 || isBorrowed || isBorrowing || isSessionPending}
               className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:scale-95 disabled:pointer-events-none disabled:opacity-60"
             >
-              {isBorrowed ? "Already borrowed" : "Borrow this book"}
+              {availableCopies === 0
+                ? "Unavailable"
+                : isBorrowed
+                  ? "Already borrowed"
+                  : isBorrowing
+                    ? "Borrowing..."
+                    : "Borrow this book"}
             </button>
           </div>
         </article>

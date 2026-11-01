@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
+import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
 
 const booksEndpoint = "http://localhost:5000/books";
 
@@ -60,11 +61,16 @@ export default function MyBooks() {
 
         const email = user.email.trim().toLowerCase();
         setBooks(
-          data.filter(
-            (book) =>
-              typeof book.Email === "string" &&
-              book.Email.trim().toLowerCase() === email,
-          ),
+          data
+            .filter(
+              (book) =>
+                typeof book.Email === "string" &&
+                book.Email.trim().toLowerCase() === email,
+            )
+            .map((book) => ({
+              ...book,
+              AvailableCopies: getAvailableCopies(book, data),
+            })),
         );
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
@@ -108,7 +114,16 @@ export default function MyBooks() {
         );
       }
 
-      setBooks((currentBooks) => currentBooks.filter((item) => item._id !== book._id));
+      const removedBookKey = getBookGroupKey(book);
+      setBooks((currentBooks) =>
+        currentBooks
+          .filter((item) => item._id !== book._id)
+          .map((item) =>
+            getBookGroupKey(item) === removedBookKey
+              ? { ...item, AvailableCopies: Math.max(0, item.AvailableCopies - 1) }
+              : item,
+          ),
+      );
       toast.success("The book was removed from your shelf.");
     } catch (error) {
       toast.error(
@@ -235,6 +250,10 @@ export default function MyBooks() {
                 </h2>
                 <p className="mt-1 text-sm font-medium text-muted-foreground">
                   by {book.Author}
+                </p>
+                <p className="mt-3 text-sm font-semibold text-primary">
+                  {book.AvailableCopies}{" "}
+                  {book.AvailableCopies === 1 ? "copy" : "copies"} available
                 </p>
                 <div className="mt-auto flex flex-wrap items-center gap-3 pt-5">
                   <Link

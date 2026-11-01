@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import { groupBookCopies } from "@/lib/book-copies";
 
 const booksPerPage = 9;
 const booksEndpoint = "http://localhost:5000/books";
@@ -74,9 +75,10 @@ export default function BooksCatalog() {
     return () => controller.abort();
   }, [retryCount]);
 
-  const pageCount = Math.ceil(books.length / booksPerPage);
+  const groupedBooks = groupBookCopies(books);
+  const pageCount = Math.ceil(groupedBooks.length / booksPerPage);
   const firstBookIndex = (currentPage - 1) * booksPerPage;
-  const visibleBooks = books.slice(firstBookIndex, firstBookIndex + booksPerPage);
+  const visibleBooks = groupedBooks.slice(firstBookIndex, firstBookIndex + booksPerPage);
 
   return (
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
@@ -138,7 +140,7 @@ export default function BooksCatalog() {
       ) : (
         <>
           <p className="mt-8 text-sm text-muted-foreground" aria-live="polite">
-            Showing {firstBookIndex + 1}–{firstBookIndex + visibleBooks.length} of {books.length}{" "}
+            Showing {firstBookIndex + 1}–{firstBookIndex + visibleBooks.length} of {groupedBooks.length}{" "}
             books
           </p>
 
@@ -170,6 +172,10 @@ export default function BooksCatalog() {
                   </h2>
                   <p className="mt-1 text-sm font-medium text-muted-foreground">
                     by {book.Author}
+                  </p>
+                  <p className="mt-3 text-sm font-semibold text-primary">
+                    {book.AvailableCopies}{" "}
+                    {book.AvailableCopies === 1 ? "copy" : "copies"} available
                   </p>
                   <Link
                     href={`/books/${encodeURIComponent(book._id)}`}
