@@ -1,69 +1,107 @@
-import Image from "next/image";
+import { Suspense } from "react";
+import { BookOpen } from "lucide-react";
+
+import CurrentDate from "@/components/CurrentDate";
+import HeroSlider from "@/components/HeroSlider";
+
+const featuredWriters = [
+  {
+    name: "William Shakespeare",
+    years: "1564-1616",
+    description:
+      "The playwright and poet whose tragedies, comedies, and histories still shape how stories are told.",
+    initials: "WS",
+    color: "bg-rose-100 text-rose-800 dark:bg-rose-400/15 dark:text-rose-300",
+  },
+  {
+    name: "Jane Austen",
+    years: "1775-1817",
+    description:
+      "A sharp, warm observer of manners and relationships, celebrated for enduring novels like Pride and Prejudice.",
+    initials: "JA",
+    color: "bg-amber-100 text-amber-800 dark:bg-amber-400/15 dark:text-amber-300",
+  },
+  {
+    name: "Maya Angelou",
+    years: "1928-2014",
+    description:
+      "An acclaimed poet and memoirist whose writing gave voice to resilience, identity, and hope.",
+    initials: "MA",
+    color: "bg-sky-100 text-sky-800 dark:bg-sky-400/15 dark:text-sky-300",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-1 flex-col">
+      <Suspense
+        fallback={
+          <div
+            aria-label="Loading featured books"
+            className="h-[min(76svh,48rem)] min-h-[29rem] animate-pulse bg-primary/10 sm:min-h-[34rem]"
+          />
+        }
+      >
+        <HeroSlider />
+      </Suspense>
+
+      <section className="border-y border-border/70 bg-amber-50/70 dark:bg-amber-400/5">
+        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-12 sm:px-6 md:grid-cols-[auto_1fr] md:items-center md:gap-8 md:py-14 lg:px-8">
+          <span className="flex size-14 items-center justify-center rounded-2xl bg-amber-200/70 text-amber-900 dark:bg-amber-300/10 dark:text-amber-300">
+            <BookOpen className="size-7" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-800 dark:text-amber-300">
+              Thought of the day
+            </p>
+            <CurrentDate />
+            <blockquote className="mt-3 max-w-3xl font-heading text-2xl font-medium leading-snug tracking-tight sm:text-3xl">
+              &ldquo;I declare after all there is no enjoyment like reading!&rdquo;
+            </blockquote>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Jane Austen, <cite>Pride and Prejudice</cite>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+        <div className="max-w-2xl">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800 dark:text-emerald-400">
+            Literary greats
+          </span>
+          <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+            Get to know the writers
+          </h2>
+          <p className="mt-3 text-base leading-7 text-muted-foreground">
+            Meet a few of the remarkable voices whose words continue to bring readers
+            together across generations.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {featuredWriters.map((writer) => (
+            <article
+              key={writer.name}
+              className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm"
+            >
+              <span
+                className={`flex size-12 items-center justify-center rounded-full font-heading text-sm font-semibold ${writer.color}`}
+                aria-hidden="true"
+              >
+                {writer.initials}
+              </span>
+              <p className="mt-5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {writer.years}
+              </p>
+              <h3 className="mt-1 font-heading text-xl font-semibold">{writer.name}</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {writer.description}
+              </p>
+            </article>
+          ))}
         </div>
-      </main>
+      </section>
     </div>
   );
 }
