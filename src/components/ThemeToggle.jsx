@@ -2,8 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
-
-const themeChangeEvent = "open-shelf-theme-change";
+import { themeChangeEvent } from "@/lib/theme";
 
 function subscribeToTheme(callback) {
   window.addEventListener(themeChangeEvent, callback);

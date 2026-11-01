@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 const inputClassName =
@@ -31,12 +32,14 @@ export default function SignInForm() {
         throw new Error(error.message || "Could not sign in.");
       }
 
+      toast.success("You’re signed in. Welcome back!");
       router.push("/my-books");
       router.refresh();
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Sign-in failed. Please try again.",
-      );
+      const message =
+        error instanceof Error ? error.message : "Sign-in failed. Please try again.";
+      setErrorMessage(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }

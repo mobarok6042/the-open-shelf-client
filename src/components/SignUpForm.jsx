@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 
 const inputClassName =
@@ -23,7 +24,9 @@ export default function SignUpForm() {
     const photo = formData.get("photo");
 
     if (!(photo instanceof File) || photo.size === 0) {
-      setErrorMessage("Choose a profile photo to continue.");
+      const message = "Choose a profile photo to continue.";
+      setErrorMessage(message);
+      toast.error(message);
       setIsSubmitting(false);
       return;
     }
@@ -54,12 +57,14 @@ export default function SignUpForm() {
         throw new Error(error.message || "Could not create your account.");
       }
 
-      router.push("/my-books");
+      toast.success("Your account was created. Sign in to continue.");
+      router.push("/sign-in");
       router.refresh();
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Registration failed. Please try again.",
-      );
+      const message =
+        error instanceof Error ? error.message : "Registration failed. Please try again.";
+      setErrorMessage(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }

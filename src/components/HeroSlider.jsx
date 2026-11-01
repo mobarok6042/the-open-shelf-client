@@ -89,7 +89,7 @@ export default function HeroSlider() {
                   href="/books"
                   className="group mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#F39A32] px-6 py-3 text-sm font-semibold text-[#164B36] shadow-lg shadow-black/15 transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffad4c] hover:shadow-xl active:scale-95"
                 >
-                  Explore the collection
+                  Browse Books
                   <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </div>

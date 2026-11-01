@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogOut, Menu, UserRound } from "lucide-react";
+import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
 
 import {
@@ -45,11 +46,13 @@ function UserMenu({ user }) {
       }
 
       setIsOpen(false);
+      toast.success("You’ve been signed out.");
       router.refresh();
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Sign-out failed. Please try again.",
-      );
+      const message =
+        error instanceof Error ? error.message : "Sign-out failed. Please try again.";
+      setErrorMessage(message);
+      toast.error(message);
     }
   }
 

@@ -1,4 +1,4 @@
-import StarterPage from "@/components/StarterPage";
+import BorrowedBooks from "@/components/BorrowedBooks";
 
 export const metadata = {
   title: "My Borrows",
@@ -6,13 +6,5 @@ export const metadata = {
 };
 
 export default function MyBorrowsPage() {
-  return (
-    <StarterPage
-      eyebrow="Your reading list"
-      title="My borrows"
-      description="Borrowed books and their return details will appear here, so you can keep your reading plans in one place."
-      actionLabel="Explore all books"
-      actionHref="/books"
-    />
-  );
+  return <BorrowedBooks />;
 }
