@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LogOut, Menu, UserRound } from "lucide-react";
+import { authClient, useSession } from "@/lib/auth-client";
 
 import {
   Sheet,
@@ -23,12 +25,112 @@ const navigation = [
 ];
 
 const accountLinks = [
-  { label: "Sign in", href: "/signin" },
-  { label: "Sign up", href: "/signup" },
+  { label: "Sign in", href: "/sign-in" },
+  { label: "Sign up", href: "/sign-up" },
 ];
+
+function UserMenu({ user }) {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const username = user.username || user.name;
+
+  async function handleSignOut() {
+    setErrorMessage("");
+
+    try {
+      const { error } = await authClient.signOut();
+      if (error) {
+        throw new Error(error.message || "Could not sign out.");
+      }
+
+      setIsOpen(false);
+      router.refresh();
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Sign-out failed. Please try again.",
+      );
+    }
+  }
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setIsOpen(false);
+        }
+      }}
+    >
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+        onClick={() => setIsOpen((open) => !open)}
+        onFocus={() => setIsOpen(true)}
+        className="flex items-center gap-2 rounded-full border border-foreground/10 bg-background/40 py-1 pl-1 pr-3 text-left text-sm font-medium text-foreground shadow-sm backdrop-blur-xl transition-all hover:bg-background/65"
+      >
+        <span className="inline-flex size-9 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-semibold text-primary">
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt=""
+              width={36}
+              height={36}
+              unoptimized
+              className="size-full object-cover"
+            />
+          ) : (
+            username?.charAt(0)?.toUpperCase() || "R"
+          )}
+        </span>
+        <span className="max-w-32 truncate">Welcome, {username}</span>
+      </button>
+
+      {isOpen && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-[60] w-60 rounded-2xl border border-foreground/10 bg-background/90 p-2 text-foreground shadow-xl shadow-foreground/10 backdrop-blur-2xl"
+        >
+          <div className="border-b border-foreground/10 px-3 py-2">
+            <p className="truncate text-sm font-semibold">Welcome, {username}</p>
+            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+          </div>
+          <Link
+            href="/profile"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+            className="mt-1 flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-foreground/8"
+          >
+            <UserRound className="size-4" />
+            My profile
+          </Link>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={handleSignOut}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
+          >
+            <LogOut className="size-4" />
+            Sign out
+          </button>
+          {errorMessage && (
+            <p role="alert" className="px-3 py-2 text-xs text-destructive">
+              {errorMessage}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <header className="sticky top-0 z-50 border-b border-foreground/10 bg-background/35 shadow-[0_8px_30px_rgba(22,75,54,0.06)] backdrop-blur-2xl backdrop-saturate-150 transition-colors duration-300">
@@ -72,19 +174,23 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center justify-end gap-2 lg:flex">
-          {accountLinks.map((item, index) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
-                index === 1
-                  ? "bg-primary text-primary-foreground shadow-md shadow-foreground/10 hover:bg-primary/90"
-                  : "border border-foreground/15 text-foreground hover:bg-foreground/8"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            accountLinks.map((item, index) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${
+                  index === 1
+                    ? "bg-primary text-primary-foreground shadow-md shadow-foreground/10 hover:bg-primary/90"
+                    : "border border-foreground/15 text-foreground hover:bg-foreground/8"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))
+          )}
         </div>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -127,21 +233,27 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="mt-auto flex gap-3 border-t border-foreground/10 px-6 py-5">
-              {accountLinks.map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold transition-colors ${
-                    index === 1
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "border border-foreground/15 text-foreground hover:bg-foreground/8"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <div className="mt-auto flex items-center justify-between gap-3 border-t border-foreground/10 px-6 py-5">
+              {user ? (
+                <div className="ml-auto">
+                  <UserMenu user={user} />
+                </div>
+              ) : (
+                accountLinks.map((item, index) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex-1 rounded-full px-4 py-3 text-center text-sm font-semibold transition-colors ${
+                      index === 1
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-foreground/15 text-foreground hover:bg-foreground/8"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))
+              )}
             </div>
           </SheetContent>
         </Sheet>
