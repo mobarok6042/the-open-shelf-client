@@ -19,6 +19,12 @@ export default function BorrowedBooks() {
   const user = session?.user;
 
   useEffect(() => {
+    if (!isSessionPending && !user?.email) {
+      toast.error("Sign in or create an account to access My Borrows.");
+    }
+  }, [isSessionPending, user?.email]);
+
+  useEffect(() => {
     if (isSessionPending || !user?.email) {
       return;
     }
@@ -101,12 +107,17 @@ export default function BorrowedBooks() {
   if (!user?.email) {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <section className="w-full rounded-3xl border border-foreground/10 bg-background/45 p-8 text-center shadow-xl shadow-foreground/5 backdrop-blur-2xl sm:p-12">
-          <h1 className="font-heading text-3xl font-semibold text-foreground">Sign in to view your borrows</h1>
-          <p className="mt-3 text-sm text-muted-foreground">Your borrowed books are saved to your account.</p>
-          <Link href="/sign-in" className="mt-6 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
-            Sign in
-          </Link>
+        <section role="alert" className="w-full rounded-3xl border border-foreground/10 bg-background/45 p-8 text-center shadow-xl shadow-foreground/5 backdrop-blur-2xl sm:p-12">
+          <h1 className="font-heading text-3xl font-semibold text-foreground">Account required</h1>
+          <p className="mt-3 text-sm text-muted-foreground">Sign in or create an account to view your borrowed books.</p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link href="/sign-in" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+              Sign in
+            </Link>
+            <Link href="/sign-up" className="inline-flex rounded-full border border-foreground/15 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-foreground/8">
+              Create account
+            </Link>
+          </div>
         </section>
       </main>
     );

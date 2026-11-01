@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -19,6 +19,12 @@ export default function AddBookForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = session?.user;
   const userName = user?.username || user?.name || "";
+
+  useEffect(() => {
+    if (!isPending && !user?.email) {
+      toast.error("Sign in or create an account to access Add Book.");
+    }
+  }, [isPending, user?.email]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -110,19 +116,21 @@ export default function AddBookForm() {
   if (!user) {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <section className="mx-auto w-full max-w-2xl rounded-3xl border border-foreground/10 bg-background/45 p-8 text-center shadow-xl shadow-foreground/5 backdrop-blur-2xl sm:p-12">
+        <section role="alert" className="mx-auto w-full max-w-2xl rounded-3xl border border-foreground/10 bg-background/45 p-8 text-center shadow-xl shadow-foreground/5 backdrop-blur-2xl sm:p-12">
           <h1 className="font-heading text-3xl font-semibold text-foreground">
-            Sign in to add a book
+            Account required
           </h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Your account name and email will be attached to the book submission.
+            Sign in or create an account to add a book. Your account name and email will be attached to the submission.
           </p>
-          <Link
-            href="/sign-in"
-            className="mt-6 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Sign in
-          </Link>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link href="/sign-in" className="inline-flex rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+              Sign in
+            </Link>
+            <Link href="/sign-up" className="inline-flex rounded-full border border-foreground/15 px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-foreground/8">
+              Create account
+            </Link>
+          </div>
         </section>
       </main>
     );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -83,7 +84,16 @@ export default function SignUpForm() {
           Sign up to start building your reading shelf.
         </p>
 
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <div className="mt-8">
+          <GoogleAuthButton />
+        </div>
+        <div className="my-6 flex items-center gap-4 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          <span>or register with email</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="signup-name" className="text-sm font-medium text-foreground">
               Name
