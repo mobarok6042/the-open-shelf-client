@@ -22,6 +22,11 @@ export const auth = betterAuth({
         autoSignIn: false,
     },
     socialProviders: {
+        trustedOrigins: [
+            "http://localhost:3000",
+            "https://the-open-shelf-frontend.vercel.app",
+            "https://the-open-shelf-frontend-896zm1lfa-mobarok-hossens-projects.vercel.app",
+        ],
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
