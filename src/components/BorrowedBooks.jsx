@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { apiFetch, borrowsEndpoint } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function BorrowedBooks() {
   const { data: session, isPending: isSessionPending } = useSession();
@@ -95,14 +96,7 @@ export default function BorrowedBooks() {
   }
 
   if (isSessionPending) {
-    return (
-      <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <p className="flex items-center gap-2 text-sm text-muted-foreground">
-          <LoadingSpinner />
-          Loading your account...
-        </p>
-      </main>
-    );
+    return <LoadingOverlay label="Loading your account..." />;
   }
 
   if (!user?.email) {
@@ -139,10 +133,7 @@ export default function BorrowedBooks() {
       </header>
 
       {isLoading ? (
-        <p className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
-          <LoadingSpinner />
-          Loading your borrowed books...
-        </p>
+        <LoadingOverlay label="Loading your borrowed books..." />
       ) : errorMessage ? (
         <p className="mt-8 rounded-2xl border border-destructive/20 bg-background/50 p-5 text-sm text-destructive" role="alert">
           {errorMessage}

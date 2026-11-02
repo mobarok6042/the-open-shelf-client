@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { apiFetch, booksEndpoint } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -106,14 +107,7 @@ export default function AddBookForm() {
   }
 
   if (isPending) {
-    return (
-      <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
-          <LoadingSpinner />
-          Loading your account...
-        </p>
-      </main>
-    );
+    return <LoadingOverlay label="Loading your account..." />;
   }
 
   if (!user) {

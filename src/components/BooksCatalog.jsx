@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { groupBookCopies } from "@/lib/book-copies";
 import { booksEndpoint } from "@/lib/api";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const booksPerPage = 9;
 
@@ -96,27 +96,7 @@ export default function BooksCatalog() {
       </header>
 
       {isLoading ? (
-        <div className="mt-10" aria-label="Loading books">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <LoadingSpinner />
-            Loading books...
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }, (_, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-2xl border border-border/70 bg-card/60"
-            >
-              <div className="aspect-[4/3] animate-pulse bg-muted" />
-              <div className="space-y-3 p-5">
-                <div className="h-5 w-3/4 animate-pulse rounded bg-muted" />
-                <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
-                <div className="h-4 w-full animate-pulse rounded bg-muted" />
-              </div>
-            </div>
-          ))}
-          </div>
-        </div>
+        <LoadingOverlay label="Loading books..." />
       ) : errorMessage ? (
         <section
           className="mt-10 rounded-3xl border border-destructive/20 bg-background/50 p-8 text-center shadow-sm backdrop-blur-xl"
