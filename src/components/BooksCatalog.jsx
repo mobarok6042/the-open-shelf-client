@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { groupBookCopies } from "@/lib/book-copies";
 import { booksEndpoint } from "@/lib/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const booksPerPage = 9;
 
@@ -95,7 +96,12 @@ export default function BooksCatalog() {
       </header>
 
       {isLoading ? (
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="Loading books">
+        <div className="mt-10" aria-label="Loading books">
+          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <LoadingSpinner />
+            Loading books...
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }, (_, index) => (
             <div
               key={index}
@@ -109,6 +115,7 @@ export default function BooksCatalog() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       ) : errorMessage ? (
         <section

@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import Footer from "@/components/Footer";
 import AppToaster from "@/components/AppToaster";
 import Header from "@/components/Header";
+import NavigationLoading from "@/components/NavigationLoading";
 import SmoothScroll from "@/components/SmoothScroll";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -38,6 +40,9 @@ export default function RootLayout({ children }) {
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <Header />
+        <Suspense fallback={null}>
+          <NavigationLoading />
+        </Suspense>
         <SmoothScroll />
         <main className="flex flex-1 flex-col">{children}</main>
         <Footer />

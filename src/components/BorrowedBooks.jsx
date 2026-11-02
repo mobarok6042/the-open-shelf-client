@@ -7,6 +7,7 @@ import { ArrowRight, RefreshCw, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { apiFetch, borrowsEndpoint } from "@/lib/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function BorrowedBooks() {
   const { data: session, isPending: isSessionPending } = useSession();
@@ -96,7 +97,10 @@ export default function BorrowedBooks() {
   if (isSessionPending) {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <p className="text-sm text-muted-foreground" role="status">Loading your account...</p>
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <LoadingSpinner />
+          Loading your account...
+        </p>
       </main>
     );
   }
@@ -135,7 +139,10 @@ export default function BorrowedBooks() {
       </header>
 
       {isLoading ? (
-        <p className="mt-8 text-sm text-muted-foreground" role="status">Loading your borrowed books...</p>
+        <p className="mt-8 flex items-center gap-2 text-sm text-muted-foreground">
+          <LoadingSpinner />
+          Loading your borrowed books...
+        </p>
       ) : errorMessage ? (
         <p className="mt-8 rounded-2xl border border-destructive/20 bg-background/50 p-5 text-sm text-destructive" role="alert">
           {errorMessage}
@@ -202,7 +209,12 @@ export default function BorrowedBooks() {
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-60"
                   >
                     <RotateCcw className="size-4" />
-                    {returningBookId === book._id ? "Returning..." : "Return"}
+                    {returningBookId === book._id ? (
+                      <>
+                        <LoadingSpinner />
+                        Returning...
+                      </>
+                    ) : "Return"}
                   </button>
                 </div>
               </div>

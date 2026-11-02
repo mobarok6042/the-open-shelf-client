@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { useSession } from "@/lib/auth-client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -68,7 +69,8 @@ export default function ProfileDetails() {
   if (isPending) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <p className="text-sm text-muted-foreground" role="status">
+        <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
+          <LoadingSpinner />
           Loading your profile...
         </p>
       </div>
@@ -220,7 +222,12 @@ export default function ProfileDetails() {
             disabled={isSaving}
             className="inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-foreground/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
           >
-            {isSaving ? "Saving changes..." : "Save profile"}
+            {isSaving ? (
+              <>
+                <LoadingSpinner />
+                Saving changes...
+              </>
+            ) : "Save profile"}
           </button>
         </form>
       </section>

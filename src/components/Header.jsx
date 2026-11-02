@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, Menu, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { authClient, useSession } from "@/lib/auth-client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 import {
   Sheet,
@@ -34,10 +35,12 @@ function UserMenu({ user }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const username = user.username || user.name;
 
   async function handleSignOut() {
     setErrorMessage("");
+    setIsSigningOut(true);
 
     try {
       const { error } = await authClient.signOut();
@@ -53,6 +56,8 @@ function UserMenu({ user }) {
         error instanceof Error ? error.message : "Sign-out failed. Please try again.";
       setErrorMessage(message);
       toast.error(message);
+    } finally {
+      setIsSigningOut(false);
     }
   }
 
@@ -114,10 +119,11 @@ function UserMenu({ user }) {
             type="button"
             role="menuitem"
             onClick={handleSignOut}
+            disabled={isSigningOut}
             className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
           >
-            <LogOut className="size-4" />
-            Sign out
+            {isSigningOut ? <LoadingSpinner /> : <LogOut className="size-4" />}
+            {isSigningOut ? "Signing out..." : "Sign out"}
           </button>
           {errorMessage && (
             <p role="alert" className="px-3 py-2 text-xs text-destructive">
@@ -132,7 +138,7 @@ function UserMenu({ user }) {
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const user = session?.user;
 
   return (
@@ -177,7 +183,9 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center justify-end gap-2 lg:flex">
-          {user ? (
+          {isPending ? (
+            <LoadingSpinner className="size-5 text-primary" label="Loading account" />
+          ) : user ? (
             <UserMenu user={user} />
           ) : (
             accountLinks.map((item, index) => (

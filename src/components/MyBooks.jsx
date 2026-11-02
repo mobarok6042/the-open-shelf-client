@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
 import { apiFetch, booksEndpoint, myBooksEndpoint } from "@/lib/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 function isBook(book) {
   return (
@@ -145,7 +146,8 @@ export default function MyBooks() {
   if (isSessionPending) {
     return (
       <main className="mx-auto flex w-full max-w-7xl flex-1 items-center px-4 py-16 sm:px-6 lg:px-8">
-        <p className="text-sm text-muted-foreground" role="status">
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <LoadingSpinner />
           Loading your account...
         </p>
       </main>
@@ -190,7 +192,12 @@ export default function MyBooks() {
       </header>
 
       {isLoading ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="Loading your books">
+        <div className="mt-8" aria-label="Loading your books">
+          <p className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <LoadingSpinner />
+            Loading your books...
+          </p>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }, (_, index) => (
             <div
               key={index}
@@ -203,6 +210,7 @@ export default function MyBooks() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       ) : errorMessage ? (
         <section className="mt-8 rounded-3xl border border-destructive/20 bg-background/50 p-8 text-center shadow-sm backdrop-blur-xl" role="alert">
@@ -279,7 +287,12 @@ export default function MyBooks() {
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-destructive/30 px-5 py-2.5 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:pointer-events-none disabled:opacity-60"
                   >
                     <Trash2 className="size-4" />
-                    {deletingBookId === book._id ? "Removing..." : "Remove"}
+                    {deletingBookId === book._id ? (
+                      <>
+                        <LoadingSpinner />
+                        Removing...
+                      </>
+                    ) : "Remove"}
                   </button>
                 </div>
               </div>

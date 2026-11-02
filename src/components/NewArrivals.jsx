@@ -7,6 +7,7 @@ import { ArrowRight, RefreshCw } from "lucide-react";
 
 import { getBookGroupKey } from "@/lib/book-copies";
 import { newArrivalsEndpoint } from "@/lib/api";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 function isBook(book) {
   return (
@@ -111,8 +112,13 @@ export default function NewArrivals() {
       </div>
 
       {isLoading ? (
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }, (_, index) => (
+        <div className="mt-8" aria-label="Loading new arrivals">
+          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+            <LoadingSpinner />
+            Loading new arrivals...
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, index) => (
             <div
               key={index}
               className="overflow-hidden rounded-2xl border border-border/70 bg-card/60"
@@ -123,7 +129,8 @@ export default function NewArrivals() {
                 <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       ) : errorMessage ? (
         <div

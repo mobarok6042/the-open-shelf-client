@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import GoogleAuthButton from "@/components/GoogleAuthButton";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const inputClassName =
   "mt-2 block w-full rounded-xl border border-foreground/15 bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -42,6 +43,9 @@ export default function SignInForm() {
       }
 
       toast.success("You’re signed in. Welcome back!");
+      window.dispatchEvent(
+        new CustomEvent("open-shelf:navigate", { detail: "/my-books" }),
+      );
       router.push("/my-books");
       router.refresh();
     } catch (error) {
@@ -120,7 +124,12 @@ export default function SignInForm() {
             disabled={isSubmitting}
             className="inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-foreground/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? (
+              <>
+                <LoadingSpinner />
+                Signing in...
+              </>
+            ) : "Sign in"}
           </button>
         </form>
 

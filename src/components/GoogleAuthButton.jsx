@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function GoogleAuthButton() {
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -46,7 +47,12 @@ export default function GoogleAuthButton() {
       >
         G
       </span>
-      {isSigningIn ? "Connecting to Google..." : "Continue with Google"}
+      {isSigningIn ? (
+        <>
+          <LoadingSpinner />
+          Connecting to Google...
+        </>
+      ) : "Continue with Google"}
     </button>
   );
 }
