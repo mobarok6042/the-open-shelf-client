@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, RefreshCw } from "lucide-react";
 
+import { getBookGroupKey } from "@/lib/book-copies";
 import { newArrivalsEndpoint } from "@/lib/api";
 
 function isBook(book) {
@@ -47,7 +48,18 @@ export default function NewArrivals() {
           throw new Error("The books service returned data in an unexpected format.");
         }
 
-        setBooks(data.slice(0, 6));
+        const seenBooks = new Set();
+        const uniqueBooks = data.filter((book) => {
+          const key = getBookGroupKey(book);
+          if (seenBooks.has(key)) {
+            return false;
+          }
+
+          seenBooks.add(key);
+          return true;
+        });
+
+        setBooks(uniqueBooks);
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") {
           return;
@@ -86,7 +98,7 @@ export default function NewArrivals() {
             New arrivals
           </h2>
           <p className="mt-3 text-base leading-7 text-muted-foreground">
-            The six latest books added by our readers.
+            The latest unique books added by our readers.
           </p>
         </div>
         <Link
