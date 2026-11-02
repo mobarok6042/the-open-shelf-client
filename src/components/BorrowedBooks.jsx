@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight, RefreshCw, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
-import { apiFetch, API_BASE_URL } from "@/lib/api";
+import { apiFetch, borrowsEndpoint } from "@/lib/api";
 
 export default function BorrowedBooks() {
   const { data: session, isPending: isSessionPending } = useSession();
@@ -35,7 +35,7 @@ export default function BorrowedBooks() {
       setErrorMessage("");
       try {
         const response = await apiFetch(
-          `${API_BASE_URL}/borrows`,
+          borrowsEndpoint,
           { signal: controller.signal, cache: "no-store" },
         );
         const data = await response.json();
@@ -73,7 +73,7 @@ export default function BorrowedBooks() {
     setReturningBookId(book._id);
     try {
       const response = await apiFetch(
-        `${API_BASE_URL}/borrows/${encodeURIComponent(book._id)}/return`,
+        `${borrowsEndpoint}/${encodeURIComponent(book._id)}/return`,
         {
           method: "POST",
         },

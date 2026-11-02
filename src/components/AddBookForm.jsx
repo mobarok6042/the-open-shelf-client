@@ -18,6 +18,8 @@ export default function AddBookForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = session?.user;
+  const userName = user?.username || user?.name || "";
+
   useEffect(() => {
     if (!isPending && !user?.email) {
       toast.error("Sign in or create an account to access Add Book.");

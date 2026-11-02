@@ -7,7 +7,7 @@ import { ArrowLeft, BookOpen, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
-import { apiFetch, booksEndpoint } from "@/lib/api";
+import { apiFetch, borrowsEndpoint, booksEndpoint } from "@/lib/api";
 
 function isBook(book) {
   return (
@@ -62,7 +62,7 @@ export default function BookDetails({ id }) {
 
         if (selectedBook && user?.email) {
           const borrowResponse = await apiFetch(
-            `${booksEndpoint.replace(/\/books$/, "")}/borrows`,
+            borrowsEndpoint,
             { signal: controller.signal, cache: "no-store" },
           );
           const borrowResult = await borrowResponse.json();

@@ -5,9 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, RefreshCw } from "lucide-react";
 
-import { API_BASE_URL } from "@/lib/api";
-
-const latestBooksEndpoint = `${API_BASE_URL}/books/new-arrivals`;
+import { newArrivalsEndpoint } from "@/lib/api";
 
 function isBook(book) {
   return (
@@ -35,7 +33,7 @@ export default function NewArrivals() {
       setErrorMessage("");
 
       try {
-        const response = await fetch(latestBooksEndpoint, {
+        const response = await fetch(newArrivalsEndpoint, {
           signal: controller.signal,
           cache: "no-store",
         });

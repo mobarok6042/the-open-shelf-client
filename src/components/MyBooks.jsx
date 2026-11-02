@@ -7,9 +7,7 @@ import { ArrowRight, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
-import { apiFetch, booksEndpoint } from "@/lib/api";
-
-const myBooksEndpoint = `${booksEndpoint.replace(/\/books$/, "")}/my-books`;
+import { apiFetch, booksEndpoint, myBooksEndpoint } from "@/lib/api";
 
 function isBook(book) {
   return (

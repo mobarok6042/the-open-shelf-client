@@ -1,6 +1,16 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const configuredApiUrl = `${process.env.NEXT_PUBLIC_API_URL || ""}`
+  .trim()
+  .replace(/\/+$/, "");
 
+if (!configuredApiUrl) {
+  throw new Error("Set NEXT_PUBLIC_API_URL before starting the client.");
+}
+
+export const API_BASE_URL = configuredApiUrl;
 export const booksEndpoint = `${API_BASE_URL}/books`;
+export const newArrivalsEndpoint = `${booksEndpoint}/new-arrivals`;
+export const borrowsEndpoint = `${API_BASE_URL}/borrows`;
+export const myBooksEndpoint = `${API_BASE_URL}/my-books`;
 
 export async function apiFetch(url, options = {}) {
   const tokenResponse = await fetch("/api/auth/token", {
