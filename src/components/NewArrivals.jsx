@@ -8,6 +8,7 @@ import { ArrowRight, RefreshCw } from "lucide-react";
 import { getBookGroupKey } from "@/lib/book-copies";
 import { newArrivalsEndpoint } from "@/lib/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import Reveal from "@/components/Reveal";
 
 function isBook(book) {
   return (
@@ -134,11 +135,9 @@ export default function NewArrivals() {
         </p>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {books.map((book) => (
-            <article
-              key={book._id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10"
-            >
+          {books.map((book, index) => (
+            <Reveal key={book._id} className="h-full" delay={index * 0.06}>
+              <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10">
               <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                 <Image
                   src={book["Image-link"]}
@@ -166,7 +165,8 @@ export default function NewArrivals() {
                   Details
                 </Link>
               </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       )}

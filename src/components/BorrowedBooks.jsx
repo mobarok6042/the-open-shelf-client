@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { apiFetch, borrowsEndpoint } from "@/lib/api";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import Reveal from "@/components/Reveal";
 
 export default function BorrowedBooks() {
   const { data: session, isPending: isSessionPending } = useSession();
@@ -158,11 +159,9 @@ export default function BorrowedBooks() {
         </section>
       ) : (
         <section className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="Borrowed books">
-          {borrowedBooks.map((book) => (
-            <article
-              key={book._id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10"
-            >
+          {borrowedBooks.map((book, index) => (
+            <Reveal key={book._id} className="h-full" delay={index * 0.05}>
+              <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10">
               <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                 <Image
                   src={book["Image-link"]}
@@ -209,7 +208,8 @@ export default function BorrowedBooks() {
                   </button>
                 </div>
               </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </section>
       )}

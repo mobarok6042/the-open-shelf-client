@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { groupBookCopies } from "@/lib/book-copies";
 import { booksEndpoint } from "@/lib/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import Reveal from "@/components/Reveal";
 
 const booksPerPage = 9;
 
@@ -135,11 +136,9 @@ export default function BooksCatalog() {
             className="mt-5 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
             aria-label="Book collection"
           >
-            {visibleBooks.map((book) => (
-              <article
-                key={book._id}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10"
-              >
+            {visibleBooks.map((book, index) => (
+              <Reveal key={book._id} className="h-full" delay={index * 0.05}>
+                <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-foreground/10">
                 <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                   <Image
                     src={book["Image-link"]}
@@ -171,7 +170,8 @@ export default function BooksCatalog() {
                     Details
                   </Link>
                 </div>
-              </article>
+                </article>
+              </Reveal>
             ))}
           </section>
 

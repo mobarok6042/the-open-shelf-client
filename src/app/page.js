@@ -4,6 +4,7 @@ import { BookOpen } from "lucide-react";
 import CurrentDate from "@/components/CurrentDate";
 import HeroSlider from "@/components/HeroSlider";
 import NewArrivals from "@/components/NewArrivals";
+import Reveal from "@/components/Reveal";
 
 const featuredWriters = [
   {
@@ -83,11 +84,9 @@ export default function Home() {
         </div>
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {featuredWriters.map((writer) => (
-            <article
-              key={writer.name}
-              className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm"
-            >
+          {featuredWriters.map((writer, index) => (
+            <Reveal key={writer.name} delay={index * 0.08}>
+              <article className="h-full rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
               <span
                 className={`flex size-12 items-center justify-center rounded-full font-heading text-sm font-semibold ${writer.color}`}
                 aria-hidden="true"
@@ -101,7 +100,8 @@ export default function Home() {
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
                 {writer.description}
               </p>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </section>
