@@ -31,7 +31,7 @@ const accountLinks = [
   { label: "Sign up", href: "/sign-up" },
 ];
 
-function UserMenu({ user }) {
+function UserMenu({ user, openAbove = false }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -100,7 +100,9 @@ function UserMenu({ user }) {
       {isOpen && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-[60] w-60 rounded-2xl border border-foreground/10 bg-background/90 p-2 text-foreground shadow-xl shadow-foreground/10 backdrop-blur-2xl"
+          className={`absolute right-0 z-[60] w-60 rounded-2xl border border-foreground/10 bg-background/90 p-2 text-foreground shadow-xl shadow-foreground/10 backdrop-blur-2xl ${
+            openAbove ? "bottom-full mb-2" : "top-full"
+          }`}
         >
           <div className="border-b border-foreground/10 px-3 py-2">
             <p className="truncate text-sm font-semibold">Welcome, {username}</p>
@@ -247,7 +249,7 @@ export default function Header() {
             <div className="mt-auto flex items-center justify-between gap-3 border-t border-foreground/10 px-6 py-5">
               {user ? (
                 <div className="ml-auto">
-                  <UserMenu user={user} />
+                  <UserMenu user={user} openAbove />
                 </div>
               ) : (
                 accountLinks.map((item, index) => (
