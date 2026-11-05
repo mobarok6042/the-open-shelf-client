@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowRight, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { getAvailableCopies, getBookGroupKey } from "@/lib/book-copies";
@@ -253,6 +253,13 @@ export default function MyBooks() {
                     className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:bg-primary/90"
                   >
                     Details
+                  </Link>
+                  <Link
+                    href={`/my-books/${encodeURIComponent(book._id)}/edit`}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-foreground/15 px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-foreground/8"
+                  >
+                    <Pencil className="size-4" />
+                    Edit
                   </Link>
                   <button
                     type="button"

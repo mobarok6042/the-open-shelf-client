@@ -8,7 +8,7 @@ The Open Shelf is a responsive book-sharing application where readers can discov
 - Discover the six latest unique titles in New Arrivals.
 - Create an account and sign in with email/password or Google.
 - Add books with an uploaded cover image.
-- View and remove books you contributed.
+- View, edit, and remove books you contributed.
 - Borrow available copies and return borrowed books.
 - Track copy availability across duplicate title and author listings.
 - Protect Add Book, My Books, and My Borrows behind authentication.
